@@ -2,11 +2,12 @@ package nasType
 
 import "fmt"
 
-const disasterRoamingWaitRangeContentsLen uint8 = 2
+const registrationWaitRangeContentsLen uint8 = 2
 
 // DisasterRoamingWaitRange 9.11.3.84
-// This IE uses the Registration wait range Type 4 format and carries the
-// disaster roaming wait range when used with IEI 0x2C.
+// This IE uses the Registration wait range Type 4 format. In
+// CONFIGURATION UPDATE COMMAND, IEI 0x14 carries the disaster roaming wait
+// range and IEI 0x2C carries the disaster return wait range.
 // MinimumRegistrationWaitTime Row, sBit, len = [0, 0], 8, 8
 // MaximumRegistrationWaitTime Row, sBit, len = [1, 1], 8, 8
 type DisasterRoamingWaitRange struct {
@@ -18,7 +19,7 @@ type DisasterRoamingWaitRange struct {
 func NewDisasterRoamingWaitRange(iei uint8) *DisasterRoamingWaitRange {
 	disasterRoamingWaitRange := &DisasterRoamingWaitRange{}
 	disasterRoamingWaitRange.SetIei(iei)
-	disasterRoamingWaitRange.SetLen(disasterRoamingWaitRangeContentsLen)
+	disasterRoamingWaitRange.SetLen(registrationWaitRangeContentsLen)
 	return disasterRoamingWaitRange
 }
 
@@ -76,7 +77,7 @@ func (a *DisasterRoamingWaitRange) Encode() ([]byte, error) {
 	if a == nil {
 		return nil, fmt.Errorf("disaster roaming wait range is nil")
 	}
-	if a.Len != disasterRoamingWaitRangeContentsLen {
+	if a.Len != registrationWaitRangeContentsLen {
 		return nil, fmt.Errorf("invalid disaster roaming wait range length: %d", a.Len)
 	}
 
@@ -91,7 +92,7 @@ func (a *DisasterRoamingWaitRange) Decode(raw []byte) error {
 	if len(raw) != 4 {
 		return fmt.Errorf("invalid disaster roaming wait range raw length: %d", len(raw))
 	}
-	if raw[1] != disasterRoamingWaitRangeContentsLen {
+	if raw[1] != registrationWaitRangeContentsLen {
 		return fmt.Errorf("invalid disaster roaming wait range contents length: %d", raw[1])
 	}
 

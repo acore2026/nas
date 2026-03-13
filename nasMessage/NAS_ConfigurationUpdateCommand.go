@@ -25,6 +25,7 @@ type ConfigurationUpdateCommand struct {
 	*nasType.UniversalTimeAndLocalTimeZone
 	*nasType.NetworkDaylightSavingTime
 	*nasType.DisasterRoamingWaitRange
+	*nasType.DisasterReturnWaitRange
 	*nasType.LADNInformation
 	*nasType.MICOIndication
 	*nasType.NetworkSlicingIndication
@@ -50,7 +51,8 @@ const (
 	ConfigurationUpdateCommandLocalTimeZoneType                            uint8 = 0x46
 	ConfigurationUpdateCommandUniversalTimeAndLocalTimeZoneType            uint8 = 0x47
 	ConfigurationUpdateCommandNetworkDaylightSavingTimeType                uint8 = 0x49
-	ConfigurationUpdateCommandDisasterRoamingWaitRangeType                 uint8 = 0x2C
+	ConfigurationUpdateCommandDisasterRoamingWaitRangeType                 uint8 = 0x14
+	ConfigurationUpdateCommandDisasterReturnWaitRangeType                  uint8 = 0x2C
 	ConfigurationUpdateCommandLADNInformationType                          uint8 = 0x79
 	ConfigurationUpdateCommandMICOIndicationType                           uint8 = 0x0B
 	ConfigurationUpdateCommandNetworkSlicingIndicationType                 uint8 = 0x09
@@ -177,6 +179,17 @@ func (a *ConfigurationUpdateCommand) EncodeConfigurationUpdateCommand(buffer *by
 		}
 		if err := binary.Write(buffer, binary.BigEndian, a.DisasterRoamingWaitRange.Octet[:]); err != nil {
 			return fmt.Errorf("NAS encode error (ConfigurationUpdateCommand/DisasterRoamingWaitRange): %w", err)
+		}
+	}
+	if a.DisasterReturnWaitRange != nil {
+		if err := binary.Write(buffer, binary.BigEndian, a.DisasterReturnWaitRange.GetIei()); err != nil {
+			return fmt.Errorf("NAS encode error (ConfigurationUpdateCommand/DisasterReturnWaitRange): %w", err)
+		}
+		if err := binary.Write(buffer, binary.BigEndian, a.DisasterReturnWaitRange.GetLen()); err != nil {
+			return fmt.Errorf("NAS encode error (ConfigurationUpdateCommand/DisasterReturnWaitRange): %w", err)
+		}
+		if err := binary.Write(buffer, binary.BigEndian, a.DisasterReturnWaitRange.Octet[:]); err != nil {
+			return fmt.Errorf("NAS encode error (ConfigurationUpdateCommand/DisasterReturnWaitRange): %w", err)
 		}
 	}
 	if a.LADNInformation != nil {
@@ -374,6 +387,18 @@ func (a *ConfigurationUpdateCommand) DecodeConfigurationUpdateCommand(byteArray 
 			a.DisasterRoamingWaitRange.SetLen(a.DisasterRoamingWaitRange.GetLen())
 			if err := binary.Read(buffer, binary.BigEndian, a.DisasterRoamingWaitRange.Octet[:]); err != nil {
 				return fmt.Errorf("NAS decode error (ConfigurationUpdateCommand/DisasterRoamingWaitRange): %w", err)
+			}
+		case ConfigurationUpdateCommandDisasterReturnWaitRangeType:
+			a.DisasterReturnWaitRange = nasType.NewDisasterReturnWaitRange(ieiN)
+			if err := binary.Read(buffer, binary.BigEndian, &a.DisasterReturnWaitRange.Len); err != nil {
+				return fmt.Errorf("NAS decode error (ConfigurationUpdateCommand/DisasterReturnWaitRange): %w", err)
+			}
+			if a.DisasterReturnWaitRange.Len != 2 {
+				return fmt.Errorf("invalid ie length (ConfigurationUpdateCommand/DisasterReturnWaitRange): %d", a.DisasterReturnWaitRange.Len)
+			}
+			a.DisasterReturnWaitRange.SetLen(a.DisasterReturnWaitRange.GetLen())
+			if err := binary.Read(buffer, binary.BigEndian, a.DisasterReturnWaitRange.Octet[:]); err != nil {
+				return fmt.Errorf("NAS decode error (ConfigurationUpdateCommand/DisasterReturnWaitRange): %w", err)
 			}
 		case ConfigurationUpdateCommandLADNInformationType:
 			a.LADNInformation = nasType.NewLADNInformation(ieiN)

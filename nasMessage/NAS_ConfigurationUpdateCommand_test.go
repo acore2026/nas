@@ -29,6 +29,7 @@ type nasMessageConfigurationUpdateCommandData struct {
 	inUniversalTimeAndLocalTimeZone             nasType.UniversalTimeAndLocalTimeZone
 	inNetworkDaylightSavingTime                 nasType.NetworkDaylightSavingTime
 	inDisasterRoamingWaitRange                  nasType.DisasterRoamingWaitRange
+	inDisasterReturnWaitRange                   nasType.DisasterReturnWaitRange
 	inLADNInformation                           nasType.LADNInformation
 	inMICOIndication                            nasType.MICOIndication
 	inNetworkSlicingIndication                  nasType.NetworkSlicingIndication
@@ -94,6 +95,11 @@ var nasMessageConfigurationUpdateCommandTable = []nasMessageConfigurationUpdateC
 			Iei:   nasMessage.ConfigurationUpdateCommandDisasterRoamingWaitRangeType,
 			Len:   2,
 			Octet: [2]uint8{0x25, 0x4A},
+		},
+		inDisasterReturnWaitRange: nasType.DisasterReturnWaitRange{
+			Iei:   nasMessage.ConfigurationUpdateCommandDisasterReturnWaitRangeType,
+			Len:   2,
+			Octet: [2]uint8{0x33, 0x66},
 		},
 		inLADNInformation: nasType.LADNInformation{
 			Iei:    nasMessage.ConfigurationUpdateCommandLADNInformationType,
@@ -178,6 +184,9 @@ func TestNasTypeNewConfigurationUpdateCommandMessage(t *testing.T) {
 		a.DisasterRoamingWaitRange = nasType.NewDisasterRoamingWaitRange(nasMessage.ConfigurationUpdateCommandDisasterRoamingWaitRangeType)
 		a.DisasterRoamingWaitRange = &table.inDisasterRoamingWaitRange
 
+		a.DisasterReturnWaitRange = nasType.NewDisasterReturnWaitRange(nasMessage.ConfigurationUpdateCommandDisasterReturnWaitRangeType)
+		a.DisasterReturnWaitRange = &table.inDisasterReturnWaitRange
+
 		a.LADNInformation = nasType.NewLADNInformation(nasMessage.ConfigurationUpdateCommandLADNInformationType)
 		a.LADNInformation = &table.inLADNInformation
 
@@ -241,9 +250,41 @@ func TestConfigurationUpdateCommandDisasterRoamingWaitRangeRoundTrip(t *testing.
 	assert.NoError(t, err)
 
 	if assert.NotNil(t, b.DisasterRoamingWaitRange) {
-		assert.Equal(t, uint8(0x2C), b.DisasterRoamingWaitRange.GetIei())
+		assert.Equal(t, uint8(0x14), b.DisasterRoamingWaitRange.GetIei())
 		assert.Equal(t, uint8(0x02), b.DisasterRoamingWaitRange.GetLen())
 		assert.Equal(t, uint8(0x25), b.DisasterRoamingWaitRange.GetMinimumRegistrationWaitTime())
 		assert.Equal(t, uint8(0x4A), b.DisasterRoamingWaitRange.GetMaximumRegistrationWaitTime())
+	}
+}
+
+func TestConfigurationUpdateCommandDisasterReturnWaitRangeRoundTrip(t *testing.T) {
+	a := nasMessage.NewConfigurationUpdateCommand(0)
+	b := nasMessage.NewConfigurationUpdateCommand(0)
+
+	a.ExtendedProtocolDiscriminator.SetExtendedProtocolDiscriminator(nasMessage.Epd5GSMobilityManagementMessage)
+	a.SpareHalfOctetAndSecurityHeaderType.SetSecurityHeaderType(0x00)
+	a.SpareHalfOctetAndSecurityHeaderType.SetSpareHalfOctet(0x00)
+	a.ConfigurationUpdateCommandMessageIdentity.SetMessageType(nas.MsgTypeConfigurationUpdateCommand)
+
+	a.ConfigurationUpdateIndication = nasType.NewConfigurationUpdateIndication(nasMessage.ConfigurationUpdateCommandConfigurationUpdateIndicationType)
+	a.ConfigurationUpdateIndication.SetIei(nasMessage.ConfigurationUpdateCommandConfigurationUpdateIndicationType)
+
+	a.DisasterReturnWaitRange = nasType.NewDisasterReturnWaitRange(nasMessage.ConfigurationUpdateCommandDisasterReturnWaitRangeType)
+	a.DisasterReturnWaitRange.SetMinimumRegistrationWaitTime(0x33)
+	a.DisasterReturnWaitRange.SetMaximumRegistrationWaitTime(0x66)
+
+	buff := new(bytes.Buffer)
+	err := a.EncodeConfigurationUpdateCommand(buff)
+	assert.NoError(t, err)
+
+	data := buff.Bytes()
+	err = b.DecodeConfigurationUpdateCommand(&data)
+	assert.NoError(t, err)
+
+	if assert.NotNil(t, b.DisasterReturnWaitRange) {
+		assert.Equal(t, uint8(0x2C), b.DisasterReturnWaitRange.GetIei())
+		assert.Equal(t, uint8(0x02), b.DisasterReturnWaitRange.GetLen())
+		assert.Equal(t, uint8(0x33), b.DisasterReturnWaitRange.GetMinimumRegistrationWaitTime())
+		assert.Equal(t, uint8(0x66), b.DisasterReturnWaitRange.GetMaximumRegistrationWaitTime())
 	}
 }
