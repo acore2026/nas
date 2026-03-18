@@ -1,4 +1,4 @@
-module github.com/free5gc/nas
+module github.com/acore2026/nas
 
 go 1.25.5
 
