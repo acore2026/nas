@@ -3,9 +3,9 @@ package nasConvert
 import (
 	"encoding/hex"
 
-	"github.com/free5gc/nas/logger"
-	"github.com/free5gc/nas/nasType"
-	"github.com/free5gc/openapi/models"
+	"github.com/acore2026/nas/logger"
+	"github.com/acore2026/nas/nasType"
+	"github.com/acore2026/openapi/models"
 )
 
 // TS24.501 9.11.2.8 S-NSSAI

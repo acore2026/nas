@@ -7,11 +7,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/free5gc/nas/logger"
+	"github.com/acore2026/nas/logger"
 
 	//"fmt"
-	"github.com/free5gc/nas/nasMessage"
-	"github.com/free5gc/nas/nasType"
+	"github.com/acore2026/nas/nasMessage"
+	"github.com/acore2026/nas/nasType"
 )
 
 type nasMessageAuthenticationResponseData struct {

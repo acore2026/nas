@@ -19,7 +19,7 @@ func GenerateNasMessage() {
 			"\"encoding/binary\"",
 			"\"fmt\"",
 			"",
-			"\"github.com/free5gc/nas/nasType\"",
+			"\"github.com/acore2026/nas/nasType\"",
 		})
 
 		// struct definition

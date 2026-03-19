@@ -12,7 +12,7 @@ func GenerateNasEncDec() {
 		"\"encoding/binary\"",
 		"\"fmt\"",
 		"",
-		"\"github.com/free5gc/nas/nasMessage\"",
+		"\"github.com/acore2026/nas/nasMessage\"",
 	})
 
 	for _, isGMM := range []bool{true, false} {

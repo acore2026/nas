@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/free5gc/nas/nasMessage"
+	"github.com/acore2026/nas/nasMessage"
 )
 
 // Message TODO：description

@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/free5gc/nas/nasType"
-	"github.com/free5gc/openapi/models"
+	"github.com/acore2026/nas/nasType"
+	"github.com/acore2026/openapi/models"
 )
 
 func TestSuciToStringWithError(t *testing.T) {

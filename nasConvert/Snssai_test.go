@@ -3,9 +3,9 @@ package nasConvert_test
 import (
 	"testing"
 
-	"github.com/free5gc/nas/nasConvert"
-	"github.com/free5gc/nas/nasType"
-	"github.com/free5gc/openapi/models"
+	"github.com/acore2026/nas/nasConvert"
+	"github.com/acore2026/nas/nasType"
+	"github.com/acore2026/openapi/models"
 	"github.com/stretchr/testify/require"
 )
 
